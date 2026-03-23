@@ -1,19 +1,41 @@
 import Device from "../models/Device.js";
 import Transfer from "../models/Transfer.js";
-import { isValidEmail } from "../utils/validators.js";
+import { isValidObjectId } from "../utils/validators.js";
+import { findUserByIdentifier, verifyUserPassword } from "./userService.js";
 
 const initiateTransfer = async (payload) => {
-  const { deviceId, sellerEmail, buyerEmail } = payload;
+  const {
+    deviceId,
+    sellerIdentifier,
+    buyerIdentifier,
+    sellerPassword,
+    authMethod,
+    biometricVerified
+  } = payload;
 
-  if (!deviceId || !sellerEmail || !buyerEmail) {
-    const error = new Error("deviceId, sellerEmail, and buyerEmail are required");
+  if (!deviceId || !sellerIdentifier || !buyerIdentifier) {
+    const error = new Error("deviceId, sellerIdentifier, and buyerIdentifier are required");
     error.statusCode = 400;
     throw error;
   }
 
-  if (!isValidEmail(sellerEmail) || !isValidEmail(buyerEmail)) {
-    const error = new Error("Invalid sellerEmail or buyerEmail");
+  if (!isValidObjectId(deviceId)) {
+    const error = new Error("Invalid deviceId");
     error.statusCode = 400;
+    throw error;
+  }
+
+  const seller = await findUserByIdentifier(sellerIdentifier);
+  if (!seller) {
+    const error = new Error("Seller account not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  const buyer = await findUserByIdentifier(buyerIdentifier);
+  if (!buyer) {
+    const error = new Error("Buyer account not found");
+    error.statusCode = 404;
     throw error;
   }
 
@@ -30,10 +52,20 @@ const initiateTransfer = async (payload) => {
     throw error;
   }
 
-  if (device.ownerEmail !== sellerEmail.trim().toLowerCase()) {
-    const error = new Error("Seller email does not match device owner");
+  if (device.ownerId.toString() !== seller._id.toString()) {
+    const error = new Error("Seller does not match device owner");
     error.statusCode = 403;
     throw error;
+  }
+
+  if (authMethod === "biometric") {
+    if (!biometricVerified) {
+      const error = new Error("Biometric verification required");
+      error.statusCode = 401;
+      throw error;
+    }
+  } else {
+    await verifyUserPassword(seller, sellerPassword);
   }
 
   const existingPending = await Transfer.findOne({ deviceId, status: "pending" });
@@ -45,8 +77,8 @@ const initiateTransfer = async (payload) => {
 
   const transfer = await Transfer.create({
     deviceId,
-    sellerEmail: sellerEmail.trim().toLowerCase(),
-    buyerEmail: buyerEmail.trim().toLowerCase(),
+    sellerId: seller._id,
+    buyerId: buyer._id,
     status: "pending"
   });
 
@@ -56,14 +88,15 @@ const initiateTransfer = async (payload) => {
   return transfer;
 };
 
-const listPendingTransfersForBuyer = async (buyerEmail) => {
-  if (!isValidEmail(buyerEmail)) {
-    const error = new Error("Invalid buyerEmail");
-    error.statusCode = 400;
+const listPendingTransfersForBuyer = async (buyerIdentifier) => {
+  const buyer = await findUserByIdentifier(buyerIdentifier);
+  if (!buyer) {
+    const error = new Error("Buyer account not found");
+    error.statusCode = 404;
     throw error;
   }
 
-  return Transfer.find({ buyerEmail: buyerEmail.trim().toLowerCase(), status: "pending" })
+  return Transfer.find({ buyerId: buyer._id, status: "pending" })
     .populate("deviceId")
     .sort({ createdAt: -1 });
 };
@@ -87,7 +120,7 @@ const acceptTransfer = async (transferId) => {
 
   const device = await Device.findById(transfer.deviceId);
   if (device) {
-    device.ownerEmail = transfer.buyerEmail;
+    device.ownerId = transfer.buyerId;
     device.status = "active";
     await device.save();
   }

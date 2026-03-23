@@ -1,21 +1,28 @@
 import { NavLink } from "react-router-dom";
-
-const navItems = [
-  { to: "/", label: "Home" },
-  { to: "/verify", label: "Check Device" },
-  { to: "/register", label: "Register" },
-  { to: "/dashboard", label: "Dashboard" },
-  { to: "/report", label: "Report Stolen" },
-  { to: "/transfer", label: "Transfer" }
-];
+import { useAuth } from "../context/AuthContext.jsx";
 
 const MainLayout = ({ children }) => {
+  const { user, logout } = useAuth();
+
+  const navItems = user
+    ? [
+        { to: "/dashboard", label: "Dashboard" },
+        { to: "/register", label: "Register Device" },
+        { to: "/transfer", label: "Transfer" },
+        { to: "/report", label: "Report Stolen" },
+        { to: "/verify", label: "Check Device" }
+      ]
+    : [
+        { to: "/login", label: "Login" },
+        { to: "/account", label: "Sign Up" }
+      ];
+
   return (
     <div className="app-shell">
       <header className="topbar">
         <div className="container topbar__inner">
           <div className="brand">
-            <p className="brand__eyebrow">DeviceShield</p>
+            <p className="brand__eyebrow">DeviceShield-NG</p>
             <h1 className="brand__title">Secure device ownership</h1>
           </div>
           <nav className="nav">
@@ -30,6 +37,11 @@ const MainLayout = ({ children }) => {
                 {item.label}
               </NavLink>
             ))}
+            {user ? (
+              <button type="button" className="nav__link" onClick={logout}>
+                Logout
+              </button>
+            ) : null}
           </nav>
         </div>
       </header>

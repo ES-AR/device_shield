@@ -3,8 +3,8 @@ import mongoose from "mongoose";
 const transferSchema = new mongoose.Schema(
   {
     deviceId: { type: mongoose.Schema.Types.ObjectId, ref: "Device", required: true },
-    sellerEmail: { type: String, required: true, lowercase: true, trim: true },
-    buyerEmail: { type: String, required: true, lowercase: true, trim: true },
+    sellerId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    buyerId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     status: {
       type: String,
       enum: ["pending", "accepted", "rejected"],

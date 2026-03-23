@@ -44,6 +44,14 @@ const VerifyDevice = () => {
         <div className="card">
           <p className="device-card__meta">IMEI: {result.data.imei}</p>
           <p className="device-card__title">{statusLabels[result.data.status]}</p>
+          {result.data.status === "stolen" ? (
+            <div>
+              <p className="device-card__meta">Owner: {result.data.ownerName || "Unknown"}</p>
+              <p className="device-card__meta">
+                Contact number: {result.data.stolenContactNumber || "Not provided"}
+              </p>
+            </div>
+          ) : null}
         </div>
       ) : null}
       {result?.type === "error" ? (

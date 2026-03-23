@@ -1,8 +1,10 @@
 import {
   registerDevice,
   getDeviceByImei,
+  getDeviceById,
   listDevicesByOwner,
-  reportStolen
+  reportStolen,
+  recoverDevice
 } from "../services/deviceService.js";
 import { sendSuccess } from "../utils/response.js";
 
@@ -26,8 +28,19 @@ const verifyDeviceHandler = async (req, res, next) => {
     sendSuccess(res, 200, {
       imei: device.imei,
       status: device.status,
-      label: statusMap[device.status]
+      label: statusMap[device.status],
+      ownerName: device.ownerId?.fullName || "",
+      stolenContactNumber: device.status === "stolen" ? device.stolenContactNumber || "" : ""
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getDeviceByIdHandler = async (req, res, next) => {
+  try {
+    const device = await getDeviceById(req.params.id);
+    sendSuccess(res, 200, device);
   } catch (error) {
     next(error);
   }
@@ -35,11 +48,11 @@ const verifyDeviceHandler = async (req, res, next) => {
 
 const listDevicesHandler = async (req, res, next) => {
   try {
-    const { ownerEmail } = req.query;
-    if (!ownerEmail) {
+    const { ownerIdentifier } = req.query;
+    if (!ownerIdentifier) {
       return sendSuccess(res, 200, []);
     }
-    const devices = await listDevicesByOwner(ownerEmail);
+    const devices = await listDevicesByOwner(ownerIdentifier);
     sendSuccess(res, 200, devices);
   } catch (error) {
     next(error);
@@ -48,7 +61,16 @@ const listDevicesHandler = async (req, res, next) => {
 
 const reportStolenHandler = async (req, res, next) => {
   try {
-    const device = await reportStolen(req.params.id);
+    const device = await reportStolen(req.params.id, req.body?.contactNumber);
+    sendSuccess(res, 200, device);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const recoverDeviceHandler = async (req, res, next) => {
+  try {
+    const device = await recoverDevice(req.params.id);
     sendSuccess(res, 200, device);
   } catch (error) {
     next(error);
@@ -58,6 +80,8 @@ const reportStolenHandler = async (req, res, next) => {
 export {
   registerDeviceHandler,
   verifyDeviceHandler,
+  getDeviceByIdHandler,
   listDevicesHandler,
-  reportStolenHandler
+  reportStolenHandler,
+  recoverDeviceHandler
 };

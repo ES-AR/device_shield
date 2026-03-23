@@ -1,43 +1,48 @@
-import { useState } from "react";
-import FormField from "../components/FormField.jsx";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import DeviceCard from "../components/DeviceCard.jsx";
 import { listDevicesByOwner } from "../services/deviceService.js";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const Dashboard = () => {
-  const [ownerEmail, setOwnerEmail] = useState("");
   const [devices, setDevices] = useState([]);
   const [status, setStatus] = useState(null);
+  const { user } = useAuth();
 
-  const handleFetch = async (event) => {
-    event.preventDefault();
+  const loadDevices = async () => {
     setStatus(null);
     try {
-      const data = await listDevicesByOwner(ownerEmail);
+      const data = await listDevicesByOwner(user?.id);
       setDevices(data);
-      setStatus({ type: "success", message: `Found ${data.length} devices.` });
     } catch (error) {
       const message = error.response?.data?.message || "Unable to load devices.";
       setStatus({ type: "error", message });
     }
   };
 
+  useEffect(() => {
+    if (user?.id) {
+      loadDevices();
+    }
+  }, [user?.id]);
+
   return (
-    <section className="section fade-up">
+    <section className="fade-up">
       <div className="panel narrow">
         <h2 className="section__title">Your dashboard</h2>
-        <p className="section__lead">Enter your email to view your devices.</p>
-        <form onSubmit={handleFetch} className="form">
-          <FormField
-            label="Owner Email"
-            name="ownerEmail"
-            type="email"
-            value={ownerEmail}
-            onChange={(event) => setOwnerEmail(event.target.value)}
-            placeholder="owner@email.com"
-            required
-          />
-          <button className="button button--primary">Load Devices</button>
-        </form>
+        <p className="section__lead">Welcome back, {user?.fullName}.</p>
+        <div className="panel__meta">
+          <p className="device-card__meta">Account ID: {user?.id || "-"}</p>
+          <p className="device-card__meta">NIN: {user?.nin || "-"}</p>
+        </div>
+        <div className="button-row">
+          <Link className="button button--primary" to="/register">
+            Add device
+          </Link>
+          <button className="button button--outline" onClick={loadDevices}>
+            Refresh list
+          </button>
+        </div>
         {status ? (
           <div className={`alert ${status.type === "success" ? "alert--success" : "alert--error"}`}>
             {status.message}
@@ -47,7 +52,7 @@ const Dashboard = () => {
 
       <div className="feature-grid">
         {devices.map((device) => (
-          <DeviceCard key={device._id} device={device} />
+          <DeviceCard key={device._id} device={device} showDetails />
         ))}
       </div>
     </section>

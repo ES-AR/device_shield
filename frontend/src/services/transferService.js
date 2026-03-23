@@ -5,9 +5,9 @@ const initiateTransfer = async (payload) => {
   return response.data.data;
 };
 
-const listTransfersByBuyer = async (buyerEmail) => {
+const listTransfersByBuyer = async (buyerIdentifier) => {
   const response = await api.get("/api/transfers", {
-    params: { buyerEmail }
+    params: { buyerIdentifier }
   });
   return response.data.data;
 };

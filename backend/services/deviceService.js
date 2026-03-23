@@ -1,17 +1,12 @@
 import Device from "../models/Device.js";
-import { isValidEmail, isValidImei } from "../utils/validators.js";
+import { isValidImei, isValidObjectId } from "../utils/validators.js";
+import { findUserByIdentifier } from "./userService.js";
 
 const registerDevice = async (payload) => {
-  const { name, nickname, imei, ownerEmail } = payload;
+  const { name, nickname, imei, ownerIdentifier } = payload;
 
-  if (!name || !imei || !ownerEmail) {
-    const error = new Error("name, imei, and ownerEmail are required");
-    error.statusCode = 400;
-    throw error;
-  }
-
-  if (!isValidEmail(ownerEmail)) {
-    const error = new Error("Invalid ownerEmail");
+  if (!name || !imei || !ownerIdentifier) {
+    const error = new Error("name, imei, and ownerIdentifier are required");
     error.statusCode = 400;
     throw error;
   }
@@ -19,6 +14,13 @@ const registerDevice = async (payload) => {
   if (!isValidImei(imei)) {
     const error = new Error("Invalid imei");
     error.statusCode = 400;
+    throw error;
+  }
+
+  const owner = await findUserByIdentifier(ownerIdentifier);
+  if (!owner) {
+    const error = new Error("Owner account not found");
+    error.statusCode = 404;
     throw error;
   }
 
@@ -33,7 +35,7 @@ const registerDevice = async (payload) => {
     name: name.trim(),
     nickname: nickname?.trim() || "",
     imei: imei.trim(),
-    ownerEmail: ownerEmail.trim().toLowerCase(),
+    ownerId: owner._id,
     status: "active"
   });
 
@@ -47,7 +49,7 @@ const getDeviceByImei = async (imei) => {
     throw error;
   }
 
-  const device = await Device.findOne({ imei: imei.trim() });
+  const device = await Device.findOne({ imei: imei.trim() }).populate("ownerId", "fullName");
   if (!device) {
     const error = new Error("Device not found");
     error.statusCode = 404;
@@ -57,17 +59,13 @@ const getDeviceByImei = async (imei) => {
   return device;
 };
 
-const listDevicesByOwner = async (ownerEmail) => {
-  if (!isValidEmail(ownerEmail)) {
-    const error = new Error("Invalid ownerEmail");
+const getDeviceById = async (deviceId) => {
+  if (!isValidObjectId(deviceId)) {
+    const error = new Error("Invalid device id");
     error.statusCode = 400;
     throw error;
   }
 
-  return Device.find({ ownerEmail: ownerEmail.trim().toLowerCase() }).sort({ createdAt: -1 });
-};
-
-const reportStolen = async (deviceId) => {
   const device = await Device.findById(deviceId);
   if (!device) {
     const error = new Error("Device not found");
@@ -75,10 +73,61 @@ const reportStolen = async (deviceId) => {
     throw error;
   }
 
+  return device;
+};
+
+const listDevicesByOwner = async (ownerIdentifier) => {
+  const owner = await findUserByIdentifier(ownerIdentifier);
+  if (!owner) {
+    const error = new Error("Owner account not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  return Device.find({ ownerId: owner._id }).sort({ createdAt: -1 });
+};
+
+const reportStolen = async (deviceId, contactNumber) => {
+  const device = await Device.findById(deviceId);
+  if (!device) {
+    const error = new Error("Device not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  if (!contactNumber || !contactNumber.trim()) {
+    const error = new Error("Contact number is required");
+    error.statusCode = 400;
+    throw error;
+  }
+
   device.status = "stolen";
+  device.stolenContactNumber = contactNumber.trim();
   await device.save();
 
   return device;
 };
 
-export { registerDevice, getDeviceByImei, listDevicesByOwner, reportStolen };
+const recoverDevice = async (deviceId) => {
+  const device = await Device.findById(deviceId);
+  if (!device) {
+    const error = new Error("Device not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  device.status = "active";
+  device.stolenContactNumber = "";
+  await device.save();
+
+  return device;
+};
+
+export {
+  registerDevice,
+  getDeviceByImei,
+  getDeviceById,
+  listDevicesByOwner,
+  reportStolen,
+  recoverDevice
+};

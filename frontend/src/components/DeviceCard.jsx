@@ -1,6 +1,7 @@
+import { Link } from "react-router-dom";
 import StatusBadge from "./StatusBadge.jsx";
 
-const DeviceCard = ({ device, actionLabel, onAction }) => {
+const DeviceCard = ({ device, actionLabel, onAction, showDetails }) => {
   return (
     <div className="card device-card">
       <div className="device-card__header">
@@ -11,6 +12,11 @@ const DeviceCard = ({ device, actionLabel, onAction }) => {
         </div>
         <StatusBadge status={device.status} />
       </div>
+      {showDetails ? (
+        <Link to={`/devices/${device._id}`} className="button button--outline button--block">
+          View details
+        </Link>
+      ) : null}
       {actionLabel ? (
         <button
           onClick={() => onAction?.(device)}

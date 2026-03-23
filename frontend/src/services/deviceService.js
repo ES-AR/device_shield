@@ -10,16 +10,35 @@ const verifyDevice = async (imei) => {
   return response.data.data;
 };
 
-const listDevicesByOwner = async (ownerEmail) => {
+const getDeviceById = async (deviceId) => {
+  const response = await api.get(`/api/devices/id/${deviceId}`);
+  return response.data.data;
+};
+
+const listDevicesByOwner = async (ownerIdentifier) => {
   const response = await api.get("/api/devices", {
-    params: { ownerEmail }
+    params: { ownerIdentifier }
   });
   return response.data.data;
 };
 
-const reportStolen = async (deviceId) => {
-  const response = await api.put(`/api/devices/report-stolen/${deviceId}`);
+const reportStolen = async (deviceId, contactNumber) => {
+  const response = await api.put(`/api/devices/report-stolen/${deviceId}`, {
+    contactNumber
+  });
   return response.data.data;
 };
 
-export { registerDevice, verifyDevice, listDevicesByOwner, reportStolen };
+const recoverDevice = async (deviceId) => {
+  const response = await api.put(`/api/devices/recover/${deviceId}`);
+  return response.data.data;
+};
+
+export {
+  registerDevice,
+  verifyDevice,
+  getDeviceById,
+  listDevicesByOwner,
+  reportStolen,
+  recoverDevice
+};

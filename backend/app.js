@@ -3,6 +3,7 @@ import cors from "cors";
 import morgan from "morgan";
 import deviceRoutes from "./routes/deviceRoutes.js";
 import transferRoutes from "./routes/transferRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 import notFound from "./middlewares/notFound.js";
 import errorHandler from "./middlewares/errorHandler.js";
 
@@ -18,6 +19,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/devices", deviceRoutes);
 app.use("/api/transfers", transferRoutes);
+app.use("/api/users", userRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

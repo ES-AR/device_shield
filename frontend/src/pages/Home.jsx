@@ -2,10 +2,10 @@ import { Link } from "react-router-dom";
 
 const Home = () => {
   return (
-    <section className="section hero fade-up">
+    <section className="hero fade-up">
       <div className="hero__grid">
         <div className="hero__copy">
-          <p className="eyebrow">Nigeria-ready</p>
+          <p className="eyebrow">Nigeria Ready & Secure</p>
           <h2 className="hero__title">Protect your devices. Prove ownership fast.</h2>
           <p className="hero__lead">
             DeviceShield lets you register devices, verify IMEIs, report theft, and
@@ -34,7 +34,7 @@ const Home = () => {
             },
             {
               title: "Trusted Transfers",
-              body: "Move ownership between emails securely."
+              body: "Move ownership between verified NIN accounts securely."
             },
             {
               title: "Theft Reporting",

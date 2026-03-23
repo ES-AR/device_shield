@@ -17,11 +17,11 @@ const initiateTransferHandler = async (req, res, next) => {
 
 const listTransfersHandler = async (req, res, next) => {
   try {
-    const { buyerEmail } = req.query;
-    if (!buyerEmail) {
+    const { buyerIdentifier } = req.query;
+    if (!buyerIdentifier) {
       return sendSuccess(res, 200, []);
     }
-    const transfers = await listPendingTransfersForBuyer(buyerEmail);
+    const transfers = await listPendingTransfersForBuyer(buyerIdentifier);
     sendSuccess(res, 200, transfers);
   } catch (error) {
     next(error);

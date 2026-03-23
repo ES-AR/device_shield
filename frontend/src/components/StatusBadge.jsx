@@ -6,9 +6,11 @@ const statusLabel = {
 
 const StatusBadge = ({ status }) => {
   return (
+    <div>
     <span className={`status-badge status-badge--${status || "active"}`}>
       {statusLabel[status] || status}
     </span>
+    </div>
   );
 };
 

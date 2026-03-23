@@ -2,23 +2,28 @@ import { useState } from "react";
 import FormField from "../components/FormField.jsx";
 import { registerDevice } from "../services/deviceService.js";
 import useForm from "../hooks/useForm.js";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const RegisterDevice = () => {
   const { values, handleChange, reset } = useForm({
     name: "",
     nickname: "",
     imei: "",
-    ownerEmail: ""
+    ownerIdentifier: ""
   });
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
     setStatus(null);
     try {
-      const device = await registerDevice(values);
+      const device = await registerDevice({
+        ...values,
+        ownerIdentifier: user?.id
+      });
       setStatus({ type: "success", message: `Registered ${device.name}.` });
       reset();
     } catch (error) {
@@ -57,15 +62,9 @@ const RegisterDevice = () => {
           placeholder="356868012345678"
           required
         />
-        <FormField
-          label="Owner Email"
-          name="ownerEmail"
-          type="email"
-          value={values.ownerEmail}
-          onChange={handleChange}
-          placeholder="owner@email.com"
-          required
-        />
+        <div className="card">
+          <p className="section__lead">Registering as: {user?.fullName}</p>
+        </div>
         <button type="submit" disabled={loading} className="button button--primary">
           {loading ? "Saving..." : "Register Device"}
         </button>

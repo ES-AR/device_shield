@@ -120,13 +120,15 @@ p {
 .section {
   display: grid;
   gap: 1.5rem;
+  max-width: 620px;
+  margin: 0 auto;
 }
 
-.narrow {
+/* .narrow {
   max-width: 620px;
   margin: 0 auto;
   width: 100%;
-}
+} */
 
 .hero__grid {
   display: grid;
@@ -166,6 +168,7 @@ p {
   display: grid;
   gap: 1rem;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  margin-top: 10px;
 }
 
 .card {
@@ -193,6 +196,7 @@ p {
 
 .section__lead {
   color: var(--slate);
+  margin: 10px 0 20px 0
 }
 
 .form {
@@ -293,6 +297,12 @@ p {
   color: #b91c1c;
 }
 
+.alert--info {
+  background: rgba(29, 78, 216, 0.08);
+  border-color: rgba(29, 78, 216, 0.25);
+  color: #1d4ed8;
+}
+
 .device-card {
   display: grid;
   gap: 1rem;
@@ -344,13 +354,13 @@ p {
   color: #b45309;
 }
 
-.panel {
+/* .panel {
   background: rgba(255, 255, 255, 0.92);
   border-radius: var(--radius-lg);
   border: 1px solid rgba(148, 163, 184, 0.25);
   padding: 1.5rem;
   box-shadow: var(--shadow);
-}
+} */
 
 .split-grid {
   display: grid;
@@ -362,6 +372,79 @@ p {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
+}
+
+.recipient-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  align-items: center;
+}
+
+.recipient-card__avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--mist);
+  display: grid;
+  place-items: center;
+}
+
+.recipient-card__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.recipient-card__label {
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  font-size: 0.65rem;
+  color: var(--slate);
+}
+
+.recipient-card__name {
+  font-size: 1.1rem;
+  margin-top: 0.35rem;
+}
+
+.profile-preview {
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.profile-preview img {
+  width: 96px;
+  height: 96px;
+  border-radius: 24px;
+  object-fit: cover;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 20;
+}
+
+.modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+}
+
+.modal__content {
+  position: relative;
+  background: #fff;
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  width: min(560px, 92vw);
+  box-shadow: 0 40px 80px -50px rgba(15, 23, 42, 0.75);
+  display: grid;
+  gap: 1rem;
 }
 
 .fade-up {
