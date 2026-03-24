@@ -65,7 +65,7 @@ const RegisterAccount = () => {
           name="fullName"
           value={values.fullName}
           onChange={handleChange}
-          placeholder="John Doe"
+          placeholder="Musa Bala"
           required
         />
         <FormField
