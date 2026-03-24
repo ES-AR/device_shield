@@ -46,13 +46,12 @@ const run = async () => {
 
   const users = await User.find({
     $or: [{ accountId: { $exists: false } }, { accountId: null }, { accountId: "" }]
-  });
+  }).select("_id");
 
   let updated = 0;
   for (const user of users) {
     const accountId = await generateUniqueAccountId();
-    user.accountId = accountId;
-    await user.save();
+    await User.updateOne({ _id: user._id }, { $set: { accountId } }, { runValidators: false });
     updated += 1;
   }
 
