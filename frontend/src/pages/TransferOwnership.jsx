@@ -165,6 +165,7 @@ const TransferOwnership = () => {
             onChange={(event) => setBuyerIdentifier(event.target.value)}
             onBlur={handleLookup}
             placeholder="12345678901"
+            hint="Account ID is 9 characters."
             required
           />
           <RecipientCard recipient={recipient} />

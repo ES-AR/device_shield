@@ -6,6 +6,7 @@ const registerUserHandler = async (req, res, next) => {
     const user = await registerUser(req.body);
     sendSuccess(res, 201, {
       id: user._id,
+      accountId: user.accountId,
       fullName: user.fullName,
       nin: user.nin,
       email: user.email,

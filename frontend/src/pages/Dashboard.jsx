@@ -32,7 +32,7 @@ const Dashboard = () => {
         <h2 className="section__title">Your dashboard</h2>
         <p className="section__lead">Welcome back, {user?.fullName}.</p>
         <div className="panel__meta">
-          <p className="device-card__meta">Account ID: {user?.id || "-"}</p>
+          <p className="device-card__meta">Account ID: {user?.accountId || "-"}</p>
           <p className="device-card__meta">NIN: {user?.nin || "-"}</p>
         </div>
         <div className="button-row">

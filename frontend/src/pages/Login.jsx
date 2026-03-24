@@ -41,6 +41,7 @@ const Login = () => {
           value={identifier}
           onChange={(event) => setIdentifier(event.target.value)}
           placeholder="you@email.com"
+          hint="Account ID is 9 characters."
           required
         />
         <FormField
