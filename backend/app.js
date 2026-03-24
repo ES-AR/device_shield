@@ -9,7 +9,17 @@ import errorHandler from "./middlewares/errorHandler.js";
 
 const app = express();
 
-app.use(cors());
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  "https://deviceshieldng.onrender.com",
+  "http://localhost:5173",
+].filter(Boolean);
+
+app.use(
+  cors({
+    origin: allowedOrigins,
+  })
+);
 app.use(express.json());
 app.use(morgan("dev"));
 
