@@ -22,7 +22,7 @@ const MainLayout = ({ children }) => {
       <header className="topbar">
         <div className="container topbar__inner">
           <div className="brand">
-            <p className="brand__eyebrow">DeviceShield-NG</p>
+            <p className="brand__eyebrow">DeviceShield-NG V1.0</p>
             <h1 className="brand__title">Secure device ownership</h1>
           </div>
           <nav className="nav">
