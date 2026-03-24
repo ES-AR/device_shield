@@ -57,11 +57,11 @@ const DeviceDetails = () => {
   if (!device && status?.type === "error") {
     return (
       <section className="section fade-up narrow">
-        <div className="panel">
-          <p className="section__lead">{status.message}</p>
           <button className="button button--ghost" onClick={() => navigate("/dashboard")}>
             Back to dashboard
           </button>
+        <div className="panel">
+          <p className="section__lead">{status.message}</p>
         </div>
       </section>
     );
@@ -69,6 +69,9 @@ const DeviceDetails = () => {
 
   return (
     <section className="section fade-up narrow">
+      <Link className="#" to="/dashboard">
+            Back
+      </Link>
       <div className="panel">
         <div className="device-card__header">
           <div>
@@ -78,20 +81,7 @@ const DeviceDetails = () => {
           </div>
           <StatusBadge status={device?.status} />
         </div>
-        <div className="button-row">
-          <Link className="button button--outline" to="/dashboard">
-            Back to dashboard
-          </Link>
-          {device?.status !== "stolen" ? (
-            <button className="button button--primary" onClick={handleReport}>
-              Report stolen
-            </button>
-          ) : (
-            <button className="button button--primary" onClick={handleRecover}>
-              Mark recovered
-            </button>
-          )}
-        </div>
+
         {device?.status !== "stolen" ? (
           <FormField
             label="Contact number to call if stolen"
@@ -102,11 +92,25 @@ const DeviceDetails = () => {
             required
           />
         ) : null}
-        {status ? (
+
+        <div className="button-row">
+          {device?.status !== "stolen" ? (
+            <button className="button button--primary" onClick={handleReport}>
+              Report stolen
+            </button>
+          ) : (
+            <button className="button button--primary" onClick={handleRecover}>
+              Mark recovered
+            </button>
+          )}
+
+          {status ? (
           <div className={`alert ${status.type === "success" ? "alert--success" : "alert--error"}`}>
             {status.message}
           </div>
         ) : null}
+        </div>
+        
       </div>
     </section>
   );
