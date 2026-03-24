@@ -2,6 +2,21 @@
 
 DeviceShield is a lightweight platform for registering devices, verifying IMEIs, reporting theft, and transferring ownership.
 
+## Table of Contents
+
+- [Demo](#demo)
+- [Backend](#backend)
+- [Frontend](#frontend)
+- [Environment Setup](#environment-setup)
+- [Running locally](#running-locally)
+- [Deployment Guide](#deployment-guide)
+- [Feature Overview](#feature-overview)
+- [API Documentation](#api-documentation)
+
+## Demo
+
+https://deviceshieldng.onrender.com
+
 ## Backend
 
 - Node.js + Express

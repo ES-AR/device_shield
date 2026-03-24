@@ -124,6 +124,10 @@ p {
   margin: 0 auto;
 }
 
+.panel__meta {
+  margin-bottom: 20px;
+}
+
 /* .narrow {
   max-width: 620px;
   margin: 0 auto;
@@ -209,6 +213,7 @@ p {
   gap: 0.5rem;
   font-size: 0.9rem;
   color: var(--slate);
+  margin-bottom: 20px;
 }
 
 .form-label {
